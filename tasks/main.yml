@@ -44,7 +44,7 @@
 - name: set a flag/trigger for doing the install
   set_fact:
     do_install:
-  when: terraform_exec.stat.exists == false or tform_vers != local_vers
+  when: not terraform_exec.stat.exists or tform_vers != local_vers
 
 - name: do install steps when requested
   block:
@@ -54,7 +54,8 @@
 
     - name: get SHA256 checksum for latest Terraform version
       set_fact:
-        terraform_sha256: "{{ lookup('url', 'https://releases.hashicorp.com/terraform/{{ tform_vers }}/terraform_{{ tform_vers }}_SHA256SUMS') | regex_search(sha256_regexp, '\\1') }}"
+        terraform_sha256: "{{ lookup('url', 'https://releases.hashicorp.com/terraform/{{ tform_vers }}/terraform_{{ tform_vers }}_SHA256SUMS') | 
+                              regex_search(sha256_regexp, '\\1') }}"
       vars:
         sha256_regexp: '([0-9a-f]{64})  terraform_[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}_{{ sys_type }}_amd64.zip'
 

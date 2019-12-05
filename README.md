@@ -1,4 +1,4 @@
-terraform-deploy
+terraform_deploy
 =========
 
 Fetch the most recent version of Terraform from Hashicorp; update if present, install if not
@@ -26,12 +26,12 @@ Example Playbook
     - hosts: servers
       become: yes
       roles:
-         - { role: vsx_gh.terraform-deploy, install_loc: /usr/local/bin, terraform_owner: root, terraform_group: root, terraform_perms: "0755" }
+         - { role: vsx_gh.terraform_deploy, install_loc: /usr/local/bin, terraform_owner: root, terraform_group: root, terraform_perms: "0755" }
 
     # Use defaults
     - hosts: servers
       roles:
-         - { role: vsx_gh.terraform-deploy }
+         - { role: vsx_gh.terraform_deploy }
 
 License
 -------

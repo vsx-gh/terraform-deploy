@@ -24,9 +24,6 @@
     - terraform
     - hashicorp
 
-- debug:
-    msg: "{{ installed_vers }}"
-
 - name: get installed Terraform version NUMBER, if any
   set_fact:
     local_vers: "{{ installed_vers.stdout | regex_findall('Terraform v(.*)', '\\1') | first }}"
@@ -46,7 +43,7 @@
 
 - name: set a flag/trigger for doing the install
   set_fact:
-    do_install: 
+    do_install:
   when: terraform_exec.stat.exists == False or tform_vers != local_vers
 
 - name: do install steps when requested
@@ -85,7 +82,7 @@
     group: "{{ terraform_group }}"
     mode: "{{ terraform_perms }}"
     remote_src: yes
-  when: do_install is defined and terraform_bin.stat.exists 
+  when: do_install is defined and terraform_bin.stat.exists
   tags:
     - terraform
     - hashicorp

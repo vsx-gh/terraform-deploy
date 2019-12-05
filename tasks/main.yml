@@ -1,0 +1,93 @@
+---
+# tasks file for terraform-deploy
+
+- name: get system type (linux, darwin, etc.)
+  set_fact:
+    sys_type: "{{ ansible_system | lower }}"
+  tags:
+    - terraform
+    - hashicorp
+
+- name: see if Terraform already installed
+  stat:
+    path: "{{ install_loc }}/terraform"
+  register: terraform_exec
+  tags:
+    - terraform
+    - hashicorp
+
+- name: get installed Terraform version, if any
+  shell: terraform --version
+  register: installed_vers
+  when: terraform_exec.stat.exists
+  tags:
+    - terraform
+    - hashicorp
+
+- debug:
+    msg: "{{ installed_vers }}"
+
+- name: get installed Terraform version NUMBER, if any
+  set_fact:
+    local_vers: "{{ installed_vers.stdout | regex_findall('Terraform v(.*)', '\\1') | first }}"
+  when: installed_vers.rc is defined and installed_vers.rc == 0
+  tags:
+    - terraform
+    - hashicorp
+
+- name: get latest Terraform version number
+  set_fact:
+    tform_vers: "{{ lookup('url', 'https://releases.hashicorp.com/terraform/') | regex_findall(regexp, '\\1') | first }}"
+  vars:
+    regexp: 'terraform_([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})</a>'
+  tags:
+    - terraform
+    - hashicorp
+
+- name: set a flag/trigger for doing the install
+  set_fact:
+    do_install: 
+  when: terraform_exec.stat.exists == False or tform_vers != local_vers
+
+- name: do install steps when requested
+  block:
+    - name: set download location for binary
+      set_fact:
+        terraform_zip: "/tmp/terraform_{{ tform_vers }}_{{ sys_type }}_amd64.zip"
+
+    - name: get SHA256 checksum for latest Terraform version
+      set_fact:
+        terraform_sha256: "{{ lookup('url', 'https://releases.hashicorp.com/terraform/{{ tform_vers }}/terraform_{{ tform_vers }}_SHA256SUMS') | regex_search(sha256_regexp, '\\1') }}"
+      vars:
+        sha256_regexp: '([0-9a-f]{64})  terraform_[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}_{{ sys_type }}_amd64.zip'
+
+    - name: retrieve Terraform installer
+      get_url:
+        url: "https://releases.hashicorp.com/terraform/{{ tform_vers }}/terraform_{{ tform_vers }}_{{ sys_type }}_amd64.zip"
+        dest: "{{ terraform_zip }}"
+        checksum: "sha256:{{ terraform_sha256 }}"
+        owner: "{{ terraform_owner }}"
+
+    - name: ensure Terraform zip exists
+      stat:
+        path: "{{ terraform_zip }}"
+      register: terraform_bin
+  when: do_install is defined
+  tags:
+    - terraform
+    - hashicorp
+
+- name: unzip Terraform binary to .local
+  unarchive:
+    src: "{{ terraform_zip }}"
+    dest: "{{ install_loc }}"
+    owner: "{{ terraform_owner }}"
+    group: "{{ terraform_group }}"
+    mode: "{{ terraform_perms }}"
+    remote_src: yes
+  when: do_install is defined and terraform_bin.stat.exists 
+  tags:
+    - terraform
+    - hashicorp
+
+# vim: tabstop=2 expandtab shiftwidth=2 smarttab

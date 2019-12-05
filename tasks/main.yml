@@ -17,14 +17,14 @@
     - hashicorp
 
 - name: get installed Terraform version, if any
-  shell: terraform --version
+  command: terraform --version
   register: installed_vers
   when: terraform_exec.stat.exists
   tags:
     - terraform
     - hashicorp
 
-- name: get installed Terraform version NUMBER, if any
+- name: get installed Terraform version number, if any
   set_fact:
     local_vers: "{{ installed_vers.stdout | regex_findall('Terraform v(.*)', '\\1') | first }}"
   when: installed_vers.rc is defined and installed_vers.rc == 0
@@ -54,7 +54,7 @@
 
     - name: get SHA256 checksum for latest Terraform version
       set_fact:
-        terraform_sha256: "{{ lookup('url', 'https://releases.hashicorp.com/terraform/{{ tform_vers }}/terraform_{{ tform_vers }}_SHA256SUMS') | 
+        terraform_sha256: "{{ lookup('url', 'https://releases.hashicorp.com/terraform/{{ tform_vers }}/terraform_{{ tform_vers }}_SHA256SUMS') |
                               regex_search(sha256_regexp, '\\1') }}"
       vars:
         sha256_regexp: '([0-9a-f]{64})  terraform_[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}_{{ sys_type }}_amd64.zip'
@@ -75,7 +75,7 @@
     - terraform
     - hashicorp
 
-- name: unzip Terraform binary to .local
+- name: unzip Terraform binary to install location
   unarchive:
     src: "{{ terraform_zip }}"
     dest: "{{ install_loc }}"

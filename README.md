@@ -11,11 +11,13 @@ wget
 Role Variables
 --------------
 
-defaults:
+defaults:  
+```
 install_loc: "{{ ansible_env.HOME }}/.local/bin/"  
 terraform_owner: "{{ ansible_env.USER }}"  
 terraform_group: "staff"  
 terraform_perms: "0700"  
+```
 
 Example Playbook
 ----------------

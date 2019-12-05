@@ -12,15 +12,15 @@ Role Variables
 --------------
 
 defaults:
-install_loc: "{{ ansible_env.HOME }}/.local/bin/"
-terraform_owner: "{{ ansible_env.USER }}"
-terraform_group: "staff"
-terraform_perms: "0700"
+install_loc: "{{ ansible_env.HOME }}/.local/bin/"  
+terraform_owner: "{{ ansible_env.USER }}"  
+terraform_group: "staff"  
+terraform_perms: "0700"  
 
 Example Playbook
 ----------------
 
-    # Use `become` if setting user and/or group ownerships to `root` or installing to a location requiring it
+    # Use become if setting user and/or group ownerships to root or installing to a location requiring it
     - hosts: servers
       become: yes
       roles:
@@ -39,5 +39,5 @@ MIT
 Author Information
 ------------------
 
-Jeff VanSickle
+Jeff VanSickle  
 jeffvansickle.com

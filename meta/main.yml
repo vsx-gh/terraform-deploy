@@ -33,13 +33,10 @@ galaxy_info:
   # platforms is a list of platforms, and each platform has a name and a list of versions.
   #
   platforms:
-    - name: RedHat
+    - name: EL
       versions:
         - all
     - name: Fedora
-      versions:
-        - all
-    - name: CentOS
       versions:
         - all
     - name: Debian

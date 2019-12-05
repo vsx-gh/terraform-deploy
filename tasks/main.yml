@@ -44,7 +44,7 @@
 - name: set a flag/trigger for doing the install
   set_fact:
     do_install:
-  when: terraform_exec.stat.exists == False or tform_vers != local_vers
+  when: terraform_exec.stat.exists == false or tform_vers != local_vers
 
 - name: do install steps when requested
   block:

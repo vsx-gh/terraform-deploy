@@ -63,7 +63,7 @@
       get_url:
         url: "https://releases.hashicorp.com/terraform/{{ tform_vers }}/terraform_{{ tform_vers }}_{{ sys_type }}_amd64.zip"
         dest: "{{ terraform_zip }}"
-        checksum: "sha256:{{ terraform_sha256 }}"
+        checksum: "sha256:{{ terraform_sha256 | first }}"
         owner: "{{ terraform_owner }}"
 
     - name: ensure Terraform zip exists

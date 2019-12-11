@@ -17,7 +17,7 @@
     - hashicorp
 
 - name: get installed Terraform version, if any
-  command: terraform --version
+  command: "{{ install_loc }}/terraform version"
   register: installed_vers
   when: terraform_exec.stat.exists
   tags:
